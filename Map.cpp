@@ -6,3 +6,8 @@ Map::Map(unsigned vertices_count, std::vector<std::vector<unsigned>> adj_list, s
 	this->adj_list = adj_list;
 	this->agents = agents;
 }
+
+std::vector<unsigned> Map::get_agents()
+{
+	return agents;
+}
