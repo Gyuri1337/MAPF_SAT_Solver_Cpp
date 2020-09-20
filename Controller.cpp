@@ -1,13 +1,19 @@
 ﻿#include "Controller.h"
 #include "Solver.h"
 #include "Windows.h"
+#include "Writer.h"
 
 #include <iostream>
 #include <string>
 #include <sstream>
 #include "Reader.h"
-#include "Agent.h"
 #include <thread>
+
+Controller::~Controller()
+{
+	delete solver;
+}
+
 
 void Controller::main()
 {
@@ -25,24 +31,34 @@ void Controller::main()
 	reader.sort_agents(agents);
 	if(!reader.readMap(agents))
 	{
-		std::cout << "Failed to load map";
+		std::cout << "Failed to load map\n";
 		return;
 	}
+	std::cout << "Map succesfully loaded.\n";
+	std::cout << "Please enter a timeout in seconds :\n";
+	std::getline(std::cin, line);
 	auto * map = reader.getMap();
-	
+	auto  const agent_count = solve(map, std::stoi(line));
+	Writer writer;
+	writer.write(solver, map, agent_count);
 	
 }
 
-int Controller::solve(Map * map)
+int Controller::solve(Map * map, unsigned int timeout_sec)
 {
-	Solver solver;
-	bool returnvalue = false;
-	//std::thread solve_thread(&Solver::solve, &solver, map, returnvalue);
-	std::thread solve_thread1([&](Solver* solver1) {solver1->solve(map, returnvalue); });
-	Sleep(1000);
-	if (returnvalue == false)
+	solver = new Solver(timeout_sec);
+	Map* new_map = new Map(map->get_vertices_count(), map->get_adj_list(), std::vector<unsigned int>());
+	std::vector<unsigned int> agents = map->get_agents();
+	int i = 0;
+	for (; i < agents.size(); i++)
 	{
-		std::terminate();
+		new_map->add_agent(agents[i]);
+		if(!solver->solve(new_map))
+		{
+			break;
+		}
 	}
+	delete new_map;
+	return i;
 }
 

@@ -1,13 +1,20 @@
 ﻿#include "Solver.h"
 #include <Windows.h>
 #include "Map.h"
+#include <iostream>
 
-void Solver::solve(Map* map, bool &value)
+Solver::Solver(unsigned timevalue_sec)
+{
+	this->timeout = timeout;
+}
+
+
+bool Solver::solve(Map * map)
 {
 	int n = map->get_agents().size();
-	for (int i = 0; i < n; i++)
+	if(n > 20)
 	{
-		Sleep(1000);
+		return false;
 	}
-	value = true;
+	return true;
 }

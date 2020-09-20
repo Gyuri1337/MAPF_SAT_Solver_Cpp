@@ -5,6 +5,9 @@
 class Solver
 {
 public:
-	void solve(Map * map, bool &value);
+	Solver(unsigned int timevalue_sec);
+	bool solve(Map * map);
 	
+private:
+	unsigned int timeout;
 };
